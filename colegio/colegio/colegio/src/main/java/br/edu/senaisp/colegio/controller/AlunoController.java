@@ -1,6 +1,8 @@
 package br.edu.senaisp.colegio.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.senaisp.colegio.model.Aluno;
+import br.edu.senaisp.colegio.model.Turma;
 import br.edu.senaisp.colegio.service.AlunoService;
 import br.edu.senaisp.colegio.service.TurmaService;
 
@@ -24,13 +27,24 @@ public class AlunoController {
 	
 	@GetMapping
 	public ResponseEntity buscarTodos() {
-		return null;
+		return ResponseEntity.ok(alunoService.buscarTodos());
 	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity buscarPorId(
 			@PathVariable Long id) {
-		return null;
+		try {
+			Aluno a = alunoService.buscarPorId(id);
+			
+			if(a == null)
+				return ResponseEntity.notFound().build();
+			else
+				return ResponseEntity.ok(a);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+		
+		
 	} 
 	
 	@PostMapping
@@ -53,13 +67,24 @@ public class AlunoController {
 			@PathVariable Long id,
 			@RequestBody Aluno a
 			) {
-		return null;
+		return ResponseEntity.ok(alunoService.alterarAluno(id, a));
 	}	
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity excluir(
 			@PathVariable Long id) {
-		return null;
+		try {
+			Aluno a = alunoService.excluirPorId(id);
+			
+			if (a == null)
+				return ResponseEntity.notFound().build();
+			else
+				return ResponseEntity.ok(a);			
+			
+		} catch (Exception e) {
+			return ResponseEntity.badRequest()
+					.body(e.getMessage());
+		}
 	}		
 	
 	
